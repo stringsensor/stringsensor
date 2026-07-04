@@ -22,14 +22,32 @@
     --brass: #a07830;
     --line: rgba(23,20,15,0.14);
     --line-strong: rgba(23,20,15,0.28);
+    --nav-bg: rgba(241,239,233,0.86);
+    --footer-bg: #17140F;
     --serif: 'Cormorant Garamond', Georgia, serif;
     --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     --mono: 'IBM Plex Mono', ui-monospace, monospace;
     --maxw: 1180px;
   }
 
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg: #17140F;
+      --bg-panel: #1E1A14;
+      --bg-panel-2: #241F18;
+      --ink: #EDE9DF;
+      --ink-soft: #BEB6A4;
+      --ink-faint: #8b8473;
+      --rosewood: #C1665C;
+      --brass: #C79A4B;
+      --line: rgba(255,255,255,0.10);
+      --line-strong: rgba(255,255,255,0.22);
+      --nav-bg: rgba(23,20,15,0.86);
+    }
+  }
+
   *{ box-sizing:border-box; }
-  html{ scroll-behavior:smooth; }
+  html{ scroll-behavior:smooth; color-scheme: light dark; }
   @media (prefers-reduced-motion: reduce){
     html{ scroll-behavior:auto; }
     *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
@@ -42,6 +60,7 @@
     font-family:var(--sans);
     -webkit-font-smoothing:antialiased;
     line-height:1.5;
+    transition:background-color .25s ease, color .25s ease;
   }
 
   a{ color:inherit; }
@@ -66,7 +85,7 @@
   /* ---------- NAV ---------- */
   header.site{
     position:fixed; top:0; left:0; right:0; z-index:50;
-    background:rgba(241,239,233,0.86);
+    background:var(--nav-bg);
     backdrop-filter:blur(10px);
     border-bottom:1px solid transparent;
     transition:border-color .3s ease, background .3s ease;
@@ -330,7 +349,7 @@
   .cta-note{ margin-top:18px; font-size:12px; color:#a98d78; }
 
   /* ---------- FOOTER ---------- */
-  footer{ background:var(--ink); color:#c9c3b4; padding:56px 0 34px; }
+  footer{ background:var(--footer-bg); color:#c9c3b4; padding:56px 0 34px; }
   .foot-top{
     display:flex; justify-content:space-between; align-items:flex-start;
     flex-wrap:wrap; gap:40px; padding-bottom:40px; border-bottom:1px solid rgba(255,255,255,0.1);
@@ -565,7 +584,7 @@
   <div class="wrap">
     <div class="foot-top">
       <div class="foot-brand">
-        <img src="/assets/logo.png" alt="String Sense mark">
+        <img src="/assets/logo-transparent.png" alt="String Sense mark">
         <span>String Sense</span>
       </div>
       <div class="foot-cols">
