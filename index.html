@@ -29,6 +29,7 @@
     --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     --mono: 'IBM Plex Mono', ui-monospace, monospace;
     --maxw: 1180px;
+    --ease: cubic-bezier(.22,.61,.2,1);
   }
 
   @media (prefers-color-scheme: dark){
@@ -62,6 +63,16 @@
     -webkit-font-smoothing:antialiased;
     line-height:1.5;
     transition:background-color .25s ease, color .25s ease;
+  }
+
+  /* paper grain — subtle heritage texture over the whole page */
+  body::before{
+    content:''; position:fixed; inset:0; z-index:1; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:.03; mix-blend-mode:multiply;
+  }
+  @media (prefers-color-scheme: dark){
+    body::before{ opacity:.05; mix-blend-mode:overlay; }
   }
 
   a{ color:inherit; }
@@ -131,37 +142,17 @@
     overflow:hidden;
     text-align:center;
   }
-  .hero-mark{
-    display:flex; align-items:center; justify-content:center; gap:22px;
-    margin-bottom:6px;
+  h1.hero-logo{
+    margin:0 0 30px;
+    line-height:0;
   }
-  .hero-mark .fh{ height:64px; width:auto; opacity:0.92; }
-  .hero-wave{ width:min(420px, 60vw); height:auto; }
-  .hero-wave path{
-    fill:none;
-    stroke:var(--ink);
-    stroke-width:1;
-    stroke-linecap:round;
-    stroke-dasharray:900;
-    stroke-dashoffset:900;
-    animation:draw 2.2s cubic-bezier(.4,.1,.2,1) forwards;
+  h1.hero-logo img{
+    width:min(460px, 74vw); height:auto; display:block; margin:0 auto;
+    opacity:0; animation:logoIn 1.4s var(--ease) .1s forwards;
   }
-  .hero-wave .w1{ animation-delay:.05s; stroke-opacity:.85; }
-  .hero-wave .w2{ animation-delay:.20s; stroke-opacity:.6; }
-  .hero-wave .w3{ animation-delay:.35s; stroke-opacity:.4; }
-  .hero-wave .w4{ animation-delay:.10s; stroke-opacity:.85; }
-  .hero-wave .w5{ animation-delay:.25s; stroke-opacity:.6; }
-  .hero-wave .w6{ animation-delay:.40s; stroke-opacity:.4; }
-  @keyframes draw{ to{ stroke-dashoffset:0; } }
-
-  h1.wordmark{
-    font-family:var(--serif);
-    font-weight:400;
-    font-size:clamp(40px, 8vw, 92px);
-    letter-spacing:0.10em;
-    text-transform:uppercase;
-    margin:18px 0 22px;
-    color:var(--ink);
+  @keyframes logoIn{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
+  @media (prefers-color-scheme: dark){
+    h1.hero-logo img{ filter:invert(1) brightness(1.7); }
   }
   .hero-tagline{
     font-family:var(--serif);
@@ -203,11 +194,24 @@
   /* ---------- SECTION shells ---------- */
   section{ padding:120px 0; }
   @media (max-width:640px){ section{ padding:80px 0; } }
-  .divider{ height:1px; background:var(--line); }
+  .divider{ position:relative; height:1px; background:var(--line); }
+  .divider::after{
+    content:''; position:absolute; top:50%; left:50%;
+    width:5px; height:5px; transform:translate(-50%,-50%) rotate(45deg);
+    background:var(--brass); opacity:.7;
+  }
+
+  /* slow, deliberate scroll reveal (progressive enhancement via .js) */
+  .js [data-reveal]{
+    opacity:0; transform:translateY(26px);
+    transition:opacity 1.1s var(--ease), transform 1.1s var(--ease);
+    will-change:opacity, transform;
+  }
+  .js [data-reveal].in{ opacity:1; transform:none; }
 
   h2.section-title{
-    font-family:var(--serif); font-weight:400; font-size:clamp(30px,4vw,46px);
-    margin:10px 0 0; letter-spacing:0.01em;
+    font-family:var(--serif); font-weight:400; font-size:clamp(34px,4.6vw,56px);
+    margin:14px 0 0; letter-spacing:0.015em; line-height:1.08;
   }
 
   /* ---------- VISION ---------- */
@@ -217,7 +221,8 @@
   }
   .vision-quote{
     font-family:var(--serif); font-style:italic; font-weight:400;
-    font-size:clamp(24px,3vw,36px); line-height:1.4; color:var(--ink);
+    font-size:clamp(27px,3.4vw,44px); line-height:1.35; color:var(--ink);
+    letter-spacing:0.005em;
   }
   .vision-quote em{ color:var(--rosewood); font-style:italic; }
   .vision-body p{ color:var(--ink-soft); font-size:16px; line-height:1.8; margin:0 0 18px; }
@@ -236,6 +241,11 @@
     border:1px solid var(--line);
     padding:42px 38px;
     position:relative;
+    transition:transform .5s var(--ease), box-shadow .5s var(--ease);
+  }
+  .spec-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 24px 60px -30px rgba(23,20,15,0.45);
   }
   .spec-card::before{
     content:''; position:absolute; top:0; left:0; width:100%; height:3px;
@@ -370,6 +380,7 @@
     font-size:12px; color:#7a7466; flex-wrap:wrap; gap:10px;
   }
 </style>
+<script>document.documentElement.className += ' js';</script>
 </head>
 <body>
 
@@ -394,15 +405,9 @@
   <!-- HERO -->
   <section class="hero">
     <div class="wrap">
-      <div class="hero-mark">
-        <svg class="hero-wave" viewBox="0 0 420 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path class="w1" d="M0,50 C40,10 70,10 100,45 C130,80 160,80 190,50 C220,20 250,20 280,50 C310,80 340,80 380,45 C400,30 410,30 420,40"/>
-          <path class="w2" d="M0,55 C45,25 75,25 105,50 C135,75 165,75 195,55 C225,35 255,35 285,55 C315,75 345,75 385,50" transform="translate(0,3)"/>
-          <path class="w3" d="M0,48 C40,68 70,68 100,52 C130,36 160,36 190,52 C220,68 250,68 280,52 C310,36 340,36 380,52" transform="translate(0,-3)"/>
-        </svg>
-      </div>
-
-      <h1 class="wordmark">String Sense</h1>
+      <h1 class="hero-logo">
+        <img src="/assets/logo-hero.png" alt="String Sense" width="1110" height="601">
+      </h1>
       <p class="hero-tagline">An adaptive ear for the string player.</p>
       <p class="hero-sub">A precision piezo pickup and AI practice coach for violin, viola, and cello — built to hear the difference between almost right and right.</p>
 
@@ -421,7 +426,7 @@
   <section class="vision" id="vision">
     <div class="wrap">
       <span class="eyebrow">Vision</span>
-      <div class="vision-grid" style="margin-top:20px;">
+      <div class="vision-grid" style="margin-top:20px;" data-reveal>
         <p class="vision-quote">It listens the way a teacher does — <em>not just what note, but how.</em></p>
         <div class="vision-body">
           <p>String Sense clips to the bridge without altering the instrument's voice, and reads the physical signature of a performance directly off the wood: bow onset, intonation drift, tone shape, the shape of a phrase.</p>
@@ -436,13 +441,13 @@
   <!-- PRODUCT -->
   <section class="product" id="product">
     <div class="wrap">
-      <div class="product-head">
+      <div class="product-head" data-reveal>
         <span class="eyebrow">Product</span>
         <h2 class="section-title">Two halves of one instrument</h2>
         <p>A clip-on sensor built to a luthier's tolerances, paired with a companion app that turns raw signal into practice you can use.</p>
       </div>
 
-      <div class="spec-grid">
+      <div class="spec-grid" data-reveal>
         <div class="spec-card">
           <span class="spec-kicker">Hardware</span>
           <h3>The Pickup</h3>
@@ -481,13 +486,13 @@
   <!-- SIGNAL PATH -->
   <section class="signal" id="how">
     <div class="wrap">
-      <div class="signal-head">
+      <div class="signal-head" data-reveal>
         <span class="eyebrow">How it works</span>
         <h2 class="section-title">From bridge to feedback</h2>
         <p>One continuous path, from the string's first vibration to a note you can practice from tomorrow.</p>
       </div>
 
-      <div class="flow">
+      <div class="flow" data-reveal>
         <div class="flow-node">
           <span class="num">01</span>
           <div class="flow-line"></div>
@@ -541,7 +546,7 @@
       <span class="eyebrow">Feedback</span>
       <h2 class="section-title">Two speeds of listening</h2>
 
-      <div class="fb-grid">
+      <div class="fb-grid" data-reveal>
         <div class="fb-card">
           <h3>While you play</h3>
           <p>Lightweight signals at the edge of your vision flag drifting intonation, a rushed entrance, or a heavy bow — quickly enough to act on, quiet enough not to break concentration.</p>
@@ -558,7 +563,7 @@
         <button type="button" class="chip" data-level="advanced">Advanced — direct, conservatory-level</button>
       </div>
 
-      <div class="sample-note">
+      <div class="sample-note" data-reveal>
         <span class="sample-kicker">Same passage, from the session report —</span>
         <p class="sample-text" id="sampleText">Nice work today! Your G string passage was a little under pitch in a few spots — slow down there and really listen before you move your finger. You're getting closer every time.</p>
       </div>
@@ -569,7 +574,7 @@
   <section class="cta" id="contact">
     <div class="wrap">
       <span class="eyebrow">Early access</span>
-      <h2>Built for the practice room, not the pitch deck.</h2>
+      <h2 data-reveal>Built for the practice room, not the pitch deck.</h2>
       <p class="sub">String Sense is in development. Leave your email and we'll write when there's something worth trying.</p>
       <form class="waitlist" action="https://formsubmit.co/f9532f7515dbad2c2cf0c0c9042e1814" method="POST">
         <input type="hidden" name="_captcha" value="true">
@@ -642,6 +647,19 @@
       }, 180);
     });
   });
+
+  // Slow scroll reveal
+  const revealEls = document.querySelectorAll('[data-reveal]');
+  if('IntersectionObserver' in window && revealEls.length){
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold:0.12, rootMargin:'0px 0px -8% 0px' });
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('in'));
+  }
 </script>
 
 </body>
